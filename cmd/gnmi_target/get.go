@@ -22,6 +22,8 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	dataStore "github.com/onosproject/storage-service/pkg/data_store"
 )
 
 // Get overrides the Get func of gnmi.Target to provide user auth.
@@ -41,7 +43,7 @@ func (s *server) Get(ctx context.Context, req *gnmi.GetRequest) (*gnmi.GetRespon
 
 	update[0] = &gnmi.Update{
 		Value: &gnmi.Value{
-			Value: []byte("testing"),
+			Value: dataStore.GetConfig(req),
 		},
 	}
 
