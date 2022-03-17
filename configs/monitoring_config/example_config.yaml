@@ -2,27 +2,26 @@ devices_with_monitoring:
   - device_ip: 192.168.1.34
     device_name: switch_one
     protocol: NETCONF
-    default_config:
-      device_counters:
-        - name: Ethernet_in-total-frames # name/id
-          interval: 5
-          path: "elem: <name: 'ptp'> elem: <name: 'interface'> elem: <name: 'ethernet'> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
-        - name: second # name/id
-          interval: 2
-          path: "path2"
-    temporary_config:
-      device_counters:
-        - name: Ethernet_in-total-frames # name/id
-          interval: 3
-          path: "elem: <name: 'ptp'> elem: <name: 'interface'> elem: <name: 'ethernet'> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
-        - name: second # name/id
-          interval: 1
-          path: "path2"
+    configs:
+      - device_counters:
+          - name: Ethernet_in-total-frames # name/id
+            interval: 5
+            path: "elem: <name: 'ptp'> elem: <name: 'interface'> elem: <name: 'ethernet'> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
+          - name: second # name/id
+            interval: 2
+            path: "path2"
+      - device_counters:
+          - name: Ethernet_in-total-frames # name/id
+            interval: 3
+            path: "elem: <name: 'ptp'> elem: <name: 'interface'> elem: <name: 'ethernet'> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
+          - name: second # name/id
+            interval: 1
+            path: "path2"
   - device_ip: 192.168.1.82
     device_name: switch_two
     protocol: NETCONF
-    default_config:
-      device_counters:
+    configs:
+      - device_counters:
         - name: third # name/id
           interval: 2.5
           path: "path3"
@@ -32,8 +31,7 @@ devices_with_monitoring:
         - name: fifth # name/id
           interval: 10
           path: "path5"
-    temporary_config:
-      device_counters:
+      - device_counters:
         - name: third # name/id
           interval: 1.5
           path: "path3"
