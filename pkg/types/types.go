@@ -10,9 +10,21 @@ type DeviceCounters struct {
 	Path     string `yaml:"path"`
 }
 
-type ConfigRequest struct {
+type ConfigObject struct {
 	DeviceIP   string `yaml:"device_ip"`
 	DeviceName string `yaml:"device_name"`
 	Protocol   string `yaml:"protocol"`
 	Configs    []Conf `yaml:"configs"`
+}
+
+// type DevicesWithMonitoring struct {
+// 	DeviceIP   string `yaml:"device_ip"`
+// 	DeviceName string `yaml:"device_name"`
+// 	Protocol   string `yaml:"protocol"`
+// 	Configs    []Conf
+// 	} `yaml:"configs"`
+// }
+
+type Config struct {
+	Devices []ConfigObject `yaml:"devices_with_monitoring"`
 }

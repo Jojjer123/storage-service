@@ -7,22 +7,9 @@ import (
 
 	"github.com/openconfig/gnmi/proto/gnmi"
 	"gopkg.in/yaml.v2"
-)
 
-type Config struct {
-	DevicesWithMonitoring []struct {
-		DeviceIP   string `yaml:"device_ip"`
-		DeviceName string `yaml:"device_name"`
-		Protocol   string `yaml:"protocol"`
-		Configs    []struct {
-			DeviceCounters []struct {
-				Name     string `yaml:"name"`
-				Interval int    `yaml:"interval"`
-				Path     string `yaml:"path"`
-			} `yaml:"device_counters"`
-		} `yaml:"configs"`
-	} `yaml:"devices_with_monitoring"`
-}
+	types "github.com/onosproject/storage-service/pkg/types"
+)
 
 func GetConfig(req *gnmi.GetRequest) []byte {
 	filename, _ := filepath.Abs("./monitoring_config/example_config.yaml")
@@ -33,13 +20,13 @@ func GetConfig(req *gnmi.GetRequest) []byte {
 		fmt.Println("Failed to read file")
 	}
 
-	var config Config
+	var config types.Config
 	yaml.Unmarshal(config_file, &config)
 
 	// fmt.Println(config)
 
 	index := -1
-	for i, device := range config.DevicesWithMonitoring {
+	for i, device := range config.Devices {
 		if device.DeviceIP == req.Path[0].Target {
 			index = i
 			break
@@ -49,7 +36,7 @@ func GetConfig(req *gnmi.GetRequest) []byte {
 	var conf []byte
 
 	if index != -1 {
-		conf, err = yaml.Marshal(config.DevicesWithMonitoring[index])
+		conf, err = yaml.Marshal(config.Devices[index])
 	} else {
 		fmt.Println("Could not find the device in config!")
 	}
@@ -72,4 +59,43 @@ func GetConfig(req *gnmi.GetRequest) []byte {
 
 	// return nil
 	// return config_file
+}
+
+func GetFullConfig() types.Config {
+	filename, _ := filepath.Abs("./monitoring_config/example_config.yaml")
+	config_file, err := ioutil.ReadFile(filename)
+
+	if err != nil {
+		fmt.Println("Failed to read file")
+	}
+
+	var config types.Config
+	yaml.Unmarshal(config_file, &config)
+
+	return config
+}
+
+func UpdateConfig(conf types.Config) error {
+	// filename, _ := filepath.Abs("./monitoring_config/example_config.yaml")
+	// fmt.Println(filename)
+	// config_file, err := ioutil.ReadFile(filename)
+
+	// if err != nil {
+	// 	fmt.Println("Failed to read file")
+	// }
+
+	// var config Config
+	// yaml.Unmarshal(config_file, &config)
+
+	// // fmt.Println(config)
+
+	// index := -1
+	// for i, device := range config.DevicesWithMonitoring {
+	// 	if device.DeviceIP == req.Path[0].Target {
+	// 		index = i
+	// 		break
+	// 	}
+	// }
+
+	return nil
 }
