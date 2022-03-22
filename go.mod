@@ -7,6 +7,7 @@ require (
 	github.com/onosproject/gnxi-simulators v0.6.5
 	github.com/onosproject/onos-lib-go v0.8.0
 	github.com/openconfig/gnmi v0.0.0-20200617225440-d2b4e6a45802
+	github.com/openconfig/goyang v0.0.0-20200803193518-78bac27bdff1
 	github.com/openconfig/ygot v0.8.3
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3 // indirect
 	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f
