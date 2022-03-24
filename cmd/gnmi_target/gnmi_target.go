@@ -75,8 +75,6 @@ func main() {
 
 	// xmlString
 
-	netconfConv(xmlString)
-
 	// END OF TEMPORARY CHANGES
 
 	model := gnmi.NewModel(modeldata.ModelData,
@@ -138,101 +136,127 @@ func main() {
 	}
 }
 
-func netconfConv(xmlString string) *Schema {
+func netconfConv(xmlString string) *Schema { // map[string]interface{} { // *Schema {
 	decoder := xml.NewDecoder(strings.NewReader(xmlString))
 
+	// // Might be able to remove entry (needs testing)
+	// schema := &Schema{
+	// 	Entry:    &SchemaEntry{},
+	// 	Children: make(map[string]interface{}),
+	// }
 	schema := &Schema{}
 
-	// initialToken, _ := decoder.Token()
-	// switch tokenType := initialToken.(type) {
-	// case xml.StartElement:
-	// 	schema.Entry = &yang.Entry{
-	// 		Name:        tokenType.Name.Local,
-	// 		Description: tokenType.Name.Space,
-	// 	}
+	var newEntry *SchemaEntry
 
-	// 	// var newEntry *yang.Entry
-	// 	// if schema.Entry != nil {
-	// 	// 	newEntry = schema.Entry.Parent.Dir[tokenType.Name.Local]
-	// 	// }
-	// 	// schema = &Schema{Entry: newEntry, Children: make(map[string]interface{}), Parent: schema}
+	var lastNamespace string
 
-	// 	// fmt.Println(schema)
-	// default:
-	// 	fmt.Println("Failed to find root of schema!")
-	// }
+	index := 0
 
-	for i := 0; i < 3; i++ {
+	for {
 		tok, _ := decoder.Token()
 
 		if tok == nil {
+			// // Might not need to have a switch-statement as all entries should be encased with schema
+			// switch schema.Children["data"].(type) {
+			// case *Schema:
+			// 	return schema.Children //["data"].(*Schema)
+			// default:
+			// 	fmt.Println("Could not find type!")
+			// 	// return schema
+			// 	return nil
+			// }
+
 			return schema
 		}
 
-		// DOES NOT WORK... (It does not generate the correct structure or something, no entries printed)
-
 		switch tokType := tok.(type) {
 		case xml.StartElement:
-			// fmt.Println(schema.Entry)
-			var newEntry *yang.Entry
-			if schema.Entry != nil {
-				newEntry = schema.Entry.Parent.Dir[tokType.Name.Local]
-				newEntry.Description = tokType.Name.Space
-			}
-			schema = &Schema{Entry: newEntry, Children: make(map[string]interface{}), Parent: schema}
 
-			if newEntry == nil {
-				break
-			}
+			// fmt.Println("----------------------------")
+			// fmt.Println(tokType.Name.Local)
 
-			if newEntry.IsList() || newEntry.IsLeafList() {
-				if _, ok := schema.Parent.Children[newEntry.Name]; !ok {
-					schema.Parent.Children[newEntry.Name] = []interface{}{}
+			newEntry = &SchemaEntry{}
+
+			// // REWORK statement???
+			// if schema.Entry.Name != "" || schema.Parent == nil {
+			// 	if schema.Entry.Name == "" {
+			// 		lastNamespace = tokType.Name.Space
+			// 		newEntry.Description = lastNamespace
+			// 	} else if tokType.Name.Space != lastNamespace {
+			// 		lastNamespace = tokType.Name.Space
+			// 		newEntry.Description = lastNamespace
+			// 	}
+			// }
+
+			newEntry.Name = tokType.Name.Local
+
+			if index > 0 {
+				if tokType.Name.Space != lastNamespace {
+					// fmt.Println("New namespace!")
+					lastNamespace = tokType.Name.Space
+					newEntry.Namespace = lastNamespace
 				}
-				if newEntry.IsList() {
-					schema.Parent.Children[newEntry.Name] = append(schema.Parent.Children[newEntry.Name].([]interface{}), schema.Children)
-				}
-			} else if newEntry.IsContainer() {
-				schema.Parent.Children[newEntry.Name] = schema.Children
+
+				// NOT CORRECT, PARENT SHOULD BE TRACKED INSTEAD OF INDEXED
+				newEntry.Tag = "start" // ParentName = schema.Entries[index-1].Name
+
+			} else {
+				lastNamespace = tokType.Name.Space
+				newEntry.Namespace = lastNamespace
 			}
 
-			// fmt.Println(", is of type StartElement")
+			schema.Entries = append(schema.Entries, *newEntry)
+
+			index++
+
+			// schema = &Schema{Entry: newEntry, Children: make(map[string]interface{}), Parent: schema}
+			// schema.Parent.Children[newEntry.Name] = schema
 
 		case xml.EndElement:
-			schema = schema.Parent
+			newEntry = &SchemaEntry{}
+			newEntry.Name = tokType.Name.Local
+			newEntry.Tag = "end"
+			schema.Entries = append(schema.Entries, *newEntry)
 
-			// fmt.Println(", is of type EndElement")
+			index++
+
+			// schema = schema.Parent
 
 		case xml.CharData:
-			if schema.Entry != nil && (schema.Entry.IsLeaf() || schema.Entry.IsLeafList()) {
-				value := getLeafValue(tokType, schema.Entry)
-				tag := schema.Entry.Name
-				if schema.Entry.IsLeaf() {
-					schema.Parent.Children[tag] = value
-				} else {
-					schema.Parent.Children[tag] = append(schema.Parent.Children[tag].([]interface{}), value)
-				}
-			}
+			// fmt.Println("----------------------------")
+			// fmt.Println(tokType)
+			// fmt.Println("############################")
+			// fmt.Println(index, schema.Entries)
+			// fmt.Println("############################")
 
-			// fmt.Println(", is of type CharData")
+			// val := make(map[string]interface{})
+			// val[schema.Entries[index-1].Name] = tokType
+			bytes := xml.CharData(tokType)
+			schema.Entries[index-1].Value = string([]byte(bytes)) // tokType // val
+			// schema.Parent.Children[schema.Entry.Name] = tokType
 
 		default:
 			fmt.Print(", was not recognized with type: ")
 			fmt.Println(tokType)
 		}
-
-		fmt.Println(schema.Entry)
-
-		fmt.Println("-----------------")
 	}
-
-	return schema
 }
 
+// type Schema struct {
+// 	Entry    *SchemaEntry // yang.Entry
+// 	Children map[string]interface{}
+// 	Parent   *Schema
+// }
+
 type Schema struct {
-	Entry    *yang.Entry
-	Children map[string]interface{}
-	Parent   *Schema
+	Entries []SchemaEntry
+}
+
+type SchemaEntry struct {
+	Name      string
+	Tag       string
+	Namespace string
+	Value     string
 }
 
 // getRequestedNode delivers the node requested by the specified gNMI path from the
