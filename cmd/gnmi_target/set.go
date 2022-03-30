@@ -53,7 +53,14 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 				json.Unmarshal(update.Val.GetBytesVal(), &schema)
 				schemaTree := getTreeStructure(schema)
 
-				getNamespacesForPath(update.Path.Elem, schemaTree.Children)
+				getNamespacesForPath([]*gnmi.PathElem{
+					{
+						Name: "interfaces",
+					},
+					{
+						Name: "interface",
+					},
+				}, schemaTree.Children)
 			}
 		} else {
 			fmt.Println("First element in path must be an action!")
@@ -68,6 +75,7 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 	return resp, nil
 }
 
+// TODO: Add key reading in path so that specific elements based on keys can be used.
 func getNamespacesForPath(pathElems []*gnmi.PathElem, schemaTreeChildren []*SchemaTree) []*gnmi.PathElem {
 	childFound := false
 	if len(pathElems) > 0 {
