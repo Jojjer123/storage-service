@@ -81,6 +81,7 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 
 // TODO: Add key reading in path so that specific elements based on keys can be used.
 func getNamespacesForPath(pathElems []*gnmi.PathElem, schemaTreeChildren []*SchemaTree) []*gnmi.PathElem {
+	var newPathElems []*gnmi.PathElem
 	childFound := false
 	if len(pathElems) > 0 {
 		for _, child := range schemaTreeChildren {
@@ -94,8 +95,9 @@ func getNamespacesForPath(pathElems []*gnmi.PathElem, schemaTreeChildren []*Sche
 				// 	fmt.Printf("No namespace for elem %s\n", child.Name)
 				// }
 				childFound = true
-				getNamespacesForPath(pathElems[1:], child.Children)
-				break
+				newPathElems = append(newPathElems, pathElems[0])
+				return append(newPathElems, getNamespacesForPath(pathElems[1:], child.Children)[0])
+				// break
 			}
 		}
 
