@@ -56,9 +56,11 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 				getNamespacesForPath([]*gnmi.PathElem{
 					{
 						Name: "interfaces",
+						Key:  map[string]string{},
 					},
 					{
 						Name: "interface",
+						Key:  map[string]string{},
 					},
 				}, schemaTree.Children)
 			}
