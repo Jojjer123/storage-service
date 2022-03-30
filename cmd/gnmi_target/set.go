@@ -15,6 +15,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -38,14 +39,15 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 	}
 	fmt.Println("allowed a Set request")
 
-	// fmt.Println(req.Update[0].Path)
-
 	var updateResult []*gnmi.UpdateResult
 
 	for _, update := range req.Update {
 		if update.Path.Elem[0].Name == "Action" {
 			if update.Path.Elem[0].Key["Action"] == "Change config" {
 				updateResult = append(updateResult, s.updateConfig(update))
+			} else if update.Path.Elem[0].Key["Action"] == "Store namespaces" {
+				// TODO: store namespaces
+				extractNamespaces(update.Val.GetBytesVal())
 			}
 		} else {
 			fmt.Println("First element in path must be an action!")
@@ -58,6 +60,126 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 	}
 
 	return resp, nil
+}
+
+func extractNamespaces(bytes []byte) {
+	var schema Schema
+	json.Unmarshal(bytes, &schema)
+
+	// fmt.Println(schema)
+	schemaTree := getTreeStructure(schema)
+
+	// fmt.Println("#######################")
+	fmt.Println(schemaTree.Name)
+	fmt.Println("--------")
+	for _, child := range schemaTree.Children {
+		fmt.Print(" - ")
+		fmt.Print(child.Name)
+		fmt.Print(", ")
+		fmt.Println(child.Namespace)
+	}
+}
+
+type SchemaTree struct {
+	Name      string
+	Namespace string
+	Children  []*SchemaTree
+	Parent    *SchemaTree
+	Value     string
+}
+
+// TODO: add pointer that traverse the tree based on tags, use that pointer to
+// get correct parents.
+func getTreeStructure(schema Schema) *SchemaTree {
+	var newTree *SchemaTree
+	tree := &SchemaTree{}
+	lastNode := ""
+	for _, entry := range schema.Entries {
+		// fmt.Println("-------------------")
+		// if index == 0 {
+		// newTree = &SchemaTree{Parent: tree}
+		// newTree.Name = entry.Name
+		// newTree.Namespace = entry.Namespace
+		// fmt.Println(tree.Name)
+		// tree = &SchemaTree{Parent: tree}
+		// continue
+		// }
+		if entry.Value == "" { // Directory
+			if entry.Tag == "end" {
+				if entry.Name != "data" {
+					if lastNode != "leaf" {
+						// fmt.Println(tree.Name)
+						tree = tree.Parent
+					}
+					lastNode = ""
+					// continue
+				}
+			} else {
+
+				newTree = &SchemaTree{Parent: tree}
+
+				newTree.Name = entry.Name
+				newTree.Namespace = entry.Namespace
+				newTree.Parent.Children = append(newTree.Parent.Children, newTree)
+
+				tree = newTree
+
+				// fmt.Print(tree.Name)
+				// fmt.Print(", ")
+				// fmt.Println(tree.Parent.Name)
+
+				// tree = &SchemaTree{Parent: tree}
+			}
+		} else { // Leaf
+			newTree = &SchemaTree{Parent: tree}
+
+			newTree.Name = entry.Name
+			newTree.Value = entry.Value
+			newTree.Parent.Children = append(newTree.Parent.Children, newTree)
+
+			// fmt.Print(newTree.Name)
+			// fmt.Print(", ")
+			// fmt.Println(newTree.Parent.Name)
+			// fmt.Println(newTree.Value)
+
+			lastNode = "leaf"
+		}
+		// fmt.Println("-------------------")
+		// fmt.Print("name: ")
+		// fmt.Print(tree.Name)
+		// if tree.Name != "data" {
+		// 	fmt.Print(", parent: ")
+		// 	fmt.Println(tree.Parent.Name)
+
+		// 	// fmt.Println("#######")
+		// 	// for i, child := range tree.Parent.Children {
+		// 	// 	if i < 10 {
+		// 	// 		fmt.Print(child.Name)
+		// 	// 		fmt.Print(", ")
+		// 	// 	}
+		// 	// }
+		// 	// fmt.Println("\n******")
+		// 	// for j, child := range tree.Children {
+		// 	// 	if j < 10 {
+		// 	// 		fmt.Print(child.Name)
+		// 	// 		fmt.Print(": ")
+		// 	// 		fmt.Print(child.Value)
+		// 	// 		fmt.Print(", ")
+		// 	// 	}
+		// 	// }
+		// } else {
+		// 	// fmt.Println("")
+		// 	// for _, child := range tree.Children {
+		// 	// 	fmt.Print(child.Name)
+		// 	// 	fmt.Print(" | ")
+		// 	// }
+		// }
+		// fmt.Println("")
+		// fmt.Println(entry)
+		// fmt.Println(tree.Namespace)
+		// fmt.Println("###################")
+	}
+	return tree
 }
 
 func (s *server) updateConfig(update *gnmi.Update) *gnmi.UpdateResult {
