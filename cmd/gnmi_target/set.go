@@ -54,7 +54,7 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 				schemaTree := getTreeStructure(schema)
 
 				path := &gnmi.Path{}
-				pathElements := getNamespacesForPath(path,
+				getNamespacesForPath(path,
 					[]*gnmi.PathElem{
 						{
 							Name: "interfaces",
@@ -67,8 +67,8 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 					}, schemaTree.Children)
 
 				fmt.Println(path)
-				fmt.Println("--------")
-				fmt.Println(pathElements)
+				// fmt.Println("--------")
+				// fmt.Println(pathElements)
 			}
 		} else {
 			fmt.Println("First element in path must be an action!")
@@ -84,7 +84,7 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 }
 
 // TODO: Add key reading in path so that specific elements based on keys can be used.
-func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTreeChildren []*SchemaTree) *gnmi.Path {
+func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTreeChildren []*SchemaTree) {
 	childFound := false
 	if len(pathElems) > 0 {
 		for _, child := range schemaTreeChildren {
@@ -99,18 +99,17 @@ func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTre
 				// }
 				childFound = true
 				path.Elem = append(path.Elem, pathElems[0])
-				return getNamespacesForPath(path, pathElems[1:], child.Children)
+				getNamespacesForPath(path, pathElems[1:], child.Children)
 				// break
 			}
 		}
 
 		if !childFound {
 			fmt.Printf("Could not find path element: %s", pathElems[0].Name)
-			return nil
 		}
 	}
 
-	return path
+	// return path
 
 	// fmt.Println("No more elements!")
 
