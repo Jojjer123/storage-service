@@ -82,6 +82,7 @@ func getNamespacesForPath(pathElems []*gnmi.PathElem, schemaTreeChildren []*Sche
 	childFound := false
 	if len(pathElems) > 0 {
 		for _, child := range schemaTreeChildren {
+			fmt.Println(child.Name)
 			if pathElems[0].Name == child.Name {
 				if child.Namespace != "" {
 					pathElems[0].Key["namespace"] = child.Namespace
