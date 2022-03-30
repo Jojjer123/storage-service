@@ -58,11 +58,11 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 					[]*gnmi.PathElem{
 						{
 							Name: "interfaces",
-							Key:  map[string]string{},
+							// Key:  map[string]string{},
 						},
 						{
 							Name: "interface",
-							Key:  map[string]string{},
+							// Key:  map[string]string{},
 						},
 					}, schemaTree.Children)
 
@@ -91,6 +91,9 @@ func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTre
 			// fmt.Println(child.Name)
 			if pathElems[0].Name == child.Name {
 				if child.Namespace != "" {
+					if pathElems[0].Key == nil {
+						pathElems[0].Key = map[string]string{}
+					}
 					pathElems[0].Key["namespace"] = child.Namespace
 					// fmt.Printf("Added namespace \"%s\" for child: %s\n", child.Namespace, child.Name)
 				}
