@@ -53,17 +53,21 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 				json.Unmarshal(update.Val.GetBytesVal(), &schema)
 				schemaTree := getTreeStructure(schema)
 
-				pathElements := getNamespacesForPath([]*gnmi.PathElem{
-					{
-						Name: "interfaces",
-						Key:  map[string]string{},
-					},
-					{
-						Name: "interface",
-						Key:  map[string]string{},
-					},
-				}, schemaTree.Children)
+				path := &gnmi.Path{}
+				pathElements := getNamespacesForPath(path,
+					[]*gnmi.PathElem{
+						{
+							Name: "interfaces",
+							Key:  map[string]string{},
+						},
+						{
+							Name: "interface",
+							Key:  map[string]string{},
+						},
+					}, schemaTree.Children)
 
+				fmt.Println(path)
+				fmt.Println("--------")
 				fmt.Println(pathElements)
 			}
 		} else {
@@ -80,8 +84,7 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 }
 
 // TODO: Add key reading in path so that specific elements based on keys can be used.
-func getNamespacesForPath(pathElems []*gnmi.PathElem, schemaTreeChildren []*SchemaTree) []*gnmi.PathElem {
-	var newPathElems []*gnmi.PathElem
+func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTreeChildren []*SchemaTree) *gnmi.Path {
 	childFound := false
 	if len(pathElems) > 0 {
 		for _, child := range schemaTreeChildren {
@@ -95,8 +98,8 @@ func getNamespacesForPath(pathElems []*gnmi.PathElem, schemaTreeChildren []*Sche
 				// 	fmt.Printf("No namespace for elem %s\n", child.Name)
 				// }
 				childFound = true
-				newPathElems = append(newPathElems, pathElems[0])
-				return append(newPathElems, getNamespacesForPath(pathElems[1:], child.Children)[0])
+				path.Elem = append(path.Elem, pathElems[0])
+				return getNamespacesForPath(path, pathElems[1:], child.Children)
 				// break
 			}
 		}
@@ -107,9 +110,11 @@ func getNamespacesForPath(pathElems []*gnmi.PathElem, schemaTreeChildren []*Sche
 		}
 	}
 
+	return path
+
 	// fmt.Println("No more elements!")
 
-	return nil
+	// return nil
 }
 
 // func extractNamespaces(bytes []byte) {
