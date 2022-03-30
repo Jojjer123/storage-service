@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/google/gnxi/utils/credentials"
 	"github.com/openconfig/gnmi/proto/gnmi"
@@ -75,8 +74,7 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 	}
 
 	resp := &gnmi.SetResponse{
-		Response:  updateResult,
-		Timestamp: time.Now().UnixNano(),
+		Response: updateResult,
 	}
 
 	return resp, nil
