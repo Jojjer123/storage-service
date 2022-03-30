@@ -86,9 +86,9 @@ func getNamespacesForPath(pathElems []*gnmi.PathElem, schemaTreeChildren []*Sche
 			if pathElems[0].Name == child.Name {
 				if child.Namespace != "" {
 					pathElems[0].Key["namespace"] = child.Namespace
-					fmt.Printf("Added namespace %s for child: %s", child.Namespace, child.Name)
+					fmt.Printf("Added namespace \"%s\" for child: %s\n", child.Namespace, child.Name)
 				} else {
-					fmt.Printf("No namespace for elem %s", child.Name)
+					fmt.Printf("No namespace for elem %s\n", child.Name)
 				}
 				childFound = true
 				getNamespacesForPath(pathElems[1:], child.Children)
@@ -101,6 +101,8 @@ func getNamespacesForPath(pathElems []*gnmi.PathElem, schemaTreeChildren []*Sche
 			return nil
 		}
 	}
+
+	fmt.Println("No more elements!")
 
 	return nil
 }
