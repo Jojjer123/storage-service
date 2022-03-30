@@ -53,7 +53,7 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 				json.Unmarshal(update.Val.GetBytesVal(), &schema)
 				schemaTree := getTreeStructure(schema)
 
-				getNamespacesForPath([]*gnmi.PathElem{
+				pathElements := getNamespacesForPath([]*gnmi.PathElem{
 					{
 						Name: "interfaces",
 						Key:  map[string]string{},
@@ -63,6 +63,8 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 						Key:  map[string]string{},
 					},
 				}, schemaTree.Children)
+
+				fmt.Println(pathElements)
 			}
 		} else {
 			fmt.Println("First element in path must be an action!")
@@ -82,14 +84,15 @@ func getNamespacesForPath(pathElems []*gnmi.PathElem, schemaTreeChildren []*Sche
 	childFound := false
 	if len(pathElems) > 0 {
 		for _, child := range schemaTreeChildren {
-			fmt.Println(child.Name)
+			// fmt.Println(child.Name)
 			if pathElems[0].Name == child.Name {
 				if child.Namespace != "" {
 					pathElems[0].Key["namespace"] = child.Namespace
-					fmt.Printf("Added namespace \"%s\" for child: %s\n", child.Namespace, child.Name)
-				} else {
-					fmt.Printf("No namespace for elem %s\n", child.Name)
+					// fmt.Printf("Added namespace \"%s\" for child: %s\n", child.Namespace, child.Name)
 				}
+				// else {
+				// 	fmt.Printf("No namespace for elem %s\n", child.Name)
+				// }
 				childFound = true
 				getNamespacesForPath(pathElems[1:], child.Children)
 				break
@@ -102,7 +105,7 @@ func getNamespacesForPath(pathElems []*gnmi.PathElem, schemaTreeChildren []*Sche
 		}
 	}
 
-	fmt.Println("No more elements!")
+	// fmt.Println("No more elements!")
 
 	return nil
 }
