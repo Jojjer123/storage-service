@@ -47,7 +47,13 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 				updateResult = append(updateResult, s.updateConfig(update))
 			} else if update.Path.Elem[0].Key["Action"] == "Store namespaces" {
 				// TODO: store namespaces
-				extractNamespaces(update.Val.GetBytesVal())
+				// extractNamespaces(update.Val.GetBytesVal())
+
+				var schema Schema
+				json.Unmarshal(update.Val.GetBytesVal(), &schema)
+				schemaTree := getTreeStructure(schema)
+
+				getNamespacesForPath(update.Path.Elem, schemaTree.Children)
 			}
 		} else {
 			fmt.Println("First element in path must be an action!")
@@ -62,23 +68,47 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 	return resp, nil
 }
 
-func extractNamespaces(bytes []byte) {
-	var schema Schema
-	json.Unmarshal(bytes, &schema)
+func getNamespacesForPath(pathElems []*gnmi.PathElem, schemaTreeChildren []*SchemaTree) []*gnmi.PathElem {
+	childFound := false
+	if len(pathElems) > 0 {
+		for _, child := range schemaTreeChildren {
+			if pathElems[0].Name == child.Name {
+				if child.Namespace != "" {
+					pathElems[0].Key["namespace"] = child.Namespace
+					fmt.Printf("Added namespace %s for child: %s", child.Namespace, child.Name)
+				}
+				childFound = true
+				getNamespacesForPath(pathElems[1:], child.Children)
+				break
+			}
+		}
 
-	// fmt.Println(schema)
-	schemaTree := getTreeStructure(schema)
-
-	// fmt.Println("#######################")
-	fmt.Println(schemaTree.Name)
-	fmt.Println("--------")
-	for _, child := range schemaTree.Children {
-		fmt.Print(" - ")
-		fmt.Print(child.Name)
-		fmt.Print(", ")
-		fmt.Println(child.Namespace)
+		if !childFound {
+			fmt.Printf("Could not find path element: %s", pathElems[0].Name)
+			return nil
+		}
 	}
+
+	return nil
 }
+
+// func extractNamespaces(bytes []byte) {
+// 	var schema Schema
+// 	json.Unmarshal(bytes, &schema)
+
+// 	// fmt.Println(schema)
+// 	schemaTree := getTreeStructure(schema)
+
+// 	// fmt.Println("#######################")
+// 	fmt.Println(schemaTree.Name)
+// 	fmt.Println("--------")
+// 	for _, child := range schemaTree.Children {
+// 		fmt.Print(" - ")
+// 		fmt.Print(child.Name)
+// 		fmt.Print(", ")
+// 		fmt.Println(child.Namespace)
+// 	}
+// }
 
 type SchemaTree struct {
 	Name      string
