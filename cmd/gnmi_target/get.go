@@ -108,6 +108,7 @@ func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTre
 					childFound = true
 					path.Elem = append(path.Elem, pathElems[0])
 					getNamespacesForPath(path, pathElems[1:], child.Children)
+					break
 				} else {
 					// log.Infof("%s was not correct child", child.Name)
 				}
@@ -124,6 +125,7 @@ func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTre
 				childFound = true
 				path.Elem = append(path.Elem, pathElems[0])
 				getNamespacesForPath(path, pathElems[1:], child.Children)
+				break
 			}
 		}
 	}
