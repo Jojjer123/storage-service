@@ -42,6 +42,7 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 
 	var updateResult []*gnmi.UpdateResult
 
+	// TODO: Refactor
 	for _, update := range req.Update {
 		if update.Path.Elem[0].Name == "Action" {
 			if update.Path.Elem[0].Key["Action"] == "Change config" {
@@ -57,16 +58,6 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 				s.updateSchemaTreeList(schemaTree)
 
 				s.storeSchemaTree(update.Val.GetBytesVal())
-				// path := &gnmi.Path{}
-				// getNamespacesForPath(path,
-				// 	[]*gnmi.PathElem{
-				// 		{
-				// 			Name: "interfaces",
-				// 		},
-				// 		{
-				// 			Name: "interface",
-				// 		},
-				// 	}, schemaTree.Children)
 
 				updateResult = append(updateResult, &gnmi.UpdateResult{
 					Path: &gnmi.Path{
@@ -114,30 +105,6 @@ func (s *server) storeSchemaTree(schemaBytes []byte) {
 		log.Warnf("Failed to write schemaTree to file! err: %v", err)
 	} else {
 		log.Info("Successfully wrote schemaTree to file!")
-	}
-}
-
-// TODO: Add key reading in path so that specific elements based on keys can be used.
-func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTreeChildren []*SchemaTree) {
-	childFound := false
-	if len(pathElems) > 0 {
-		for _, child := range schemaTreeChildren {
-			if pathElems[0].Name == child.Name {
-				if child.Namespace != "" {
-					if pathElems[0].Key == nil {
-						pathElems[0].Key = map[string]string{}
-					}
-					pathElems[0].Key["namespace"] = child.Namespace
-				}
-				childFound = true
-				path.Elem = append(path.Elem, pathElems[0])
-				getNamespacesForPath(path, pathElems[1:], child.Children)
-			}
-		}
-
-		if !childFound {
-			fmt.Printf("Could not find path element: %s", pathElems[0].Name)
-		}
 	}
 }
 
