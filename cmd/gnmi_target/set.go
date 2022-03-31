@@ -17,6 +17,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/fs"
+	"io/ioutil"
 	"strconv"
 
 	"github.com/google/gnxi/utils/credentials"
@@ -50,9 +52,9 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 
 				var schema Schema
 				json.Unmarshal(update.Val.GetBytesVal(), &schema)
-				schemaTree := getTreeStructure(schema)
+				// schemaTree := getTreeStructure(schema)
 
-				s.storeSchemaTree(schemaTree)
+				s.storeSchemaTree(update.Val.GetBytesVal())
 				// path := &gnmi.Path{}
 				// getNamespacesForPath(path,
 				// 	[]*gnmi.PathElem{
@@ -90,15 +92,11 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 	return resp, nil
 }
 
-func (s *server) storeSchemaTree(schemaTree *SchemaTree) {
-	_, err := json.Marshal(schemaTree)
+func (s *server) storeSchemaTree(schemaBytes []byte) {
+	err := ioutil.WriteFile("configs_with_ns.json", schemaBytes, fs.ModeAppend.Perm())
 	if err != nil {
-		log.Warnf("Failed to marshal schemaTree! err: %v", err)
-	} else {
-		log.Info("Successfully marshaled schemaTree!")
+		log.Warnf("Failed to write schemaTree to file! err: %v", err)
 	}
-
-	// ioutil.WriteFile("configs_with_ns.json", jsonDump, )
 }
 
 // TODO: Add key reading in path so that specific elements based on keys can be used.
