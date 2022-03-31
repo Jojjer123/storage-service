@@ -52,7 +52,10 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 
 				var schema Schema
 				json.Unmarshal(update.Val.GetBytesVal(), &schema)
-				// schemaTree := getTreeStructure(schema)
+				schemaTree := getTreeStructure(schema)
+				s.schemaTrees = append(s.schemaTrees, schemaTree)
+
+				log.Info(s.schemaTrees)
 
 				s.storeSchemaTree(update.Val.GetBytesVal())
 				// path := &gnmi.Path{}

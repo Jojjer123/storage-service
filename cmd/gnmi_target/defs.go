@@ -36,6 +36,7 @@ type server struct {
 	configStruct        ygot.ValidatedGoStruct
 	UpdateChann         chan *pb.Update
 	readOnlyUpdateValue *pb.Update
+	schemaTrees         []*SchemaTree
 }
 
 type streamClient struct {
