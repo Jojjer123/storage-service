@@ -70,7 +70,7 @@ func (s *server) Get(ctx context.Context, req *gnmi.GetRequest) (*gnmi.GetRespon
 }
 
 func printSchemaTree(schemaTree *SchemaTree) {
-	fmt.Printf("%s - %s - %v", schemaTree.Parent.Name, schemaTree.Name, schemaTree.Namespace)
+	log.Infof("%s - %s - %v", schemaTree.Parent.Name, schemaTree.Name, schemaTree.Namespace)
 	for _, child := range schemaTree.Children {
 		printSchemaTree(child)
 	}
