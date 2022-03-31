@@ -96,6 +96,8 @@ func (s *server) storeSchemaTree(schemaBytes []byte) {
 	err := ioutil.WriteFile("configs_with_ns.json", schemaBytes, fs.ModeAppend.Perm())
 	if err != nil {
 		log.Warnf("Failed to write schemaTree to file! err: %v", err)
+	} else {
+		log.Info("Successfully wrote schemaTree to file!")
 	}
 }
 
