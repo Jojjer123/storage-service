@@ -70,9 +70,57 @@ func (s *server) Get(ctx context.Context, req *gnmi.GetRequest) (*gnmi.GetRespon
 // TODO: Add key reading in path so that specific elements based on keys can be used.
 func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTreeChildren []*SchemaTree) {
 	childFound := false
-	if len(pathElems) > 0 {
-		for _, child := range schemaTreeChildren {
+
+	if len(pathElems) <= 0 {
+		return
+	}
+
+	for _, child := range schemaTreeChildren {
+		if len(pathElems[0].Key) > 0 {
+			var key, val string
+			for key, val = range pathElems[0].Key {
+				if key != "namespace" {
+					break
+				}
+			}
+			if pathElems[0].Name == child.Name { // Ex: child is interfaces first time, interface
+				// for key, val := range pathElems[0].Key {
+				// 	if key != "namespace" {
+				// 		for _, obj := range child.Children {
+				// 			if obj.Name == val {
+
+				// 			}
+				// 		}
+				// 	}
+				// }
+				keyChildFound := false
+				var keyChild *SchemaTree
+				for _, keyChild = range child.Children {
+					if val == keyChild.Value {
+						log.Infof("Found key child with name: %s and value: %s", keyChild.Name, keyChild.Value)
+						keyChildFound = true
+						break
+					}
+				}
+
+				if keyChildFound {
+					log.Info("Adding namespace if there are one for the current child...")
+					if child.Namespace != "" {
+						if pathElems[0].Key == nil {
+							pathElems[0].Key = map[string]string{}
+						}
+						pathElems[0].Key["namespace"] = child.Namespace
+					}
+					childFound = true
+					path.Elem = append(path.Elem, pathElems[0])
+					getNamespacesForPath(path, pathElems[1:], child.Children)
+				} else {
+					log.Infof("%s was not correct child", child.Name)
+				}
+			}
+		} else {
 			if pathElems[0].Name == child.Name {
+				log.Infof("Child with name %s does not have any keys", child.Name)
 				if child.Namespace != "" {
 					if pathElems[0].Key == nil {
 						pathElems[0].Key = map[string]string{}
@@ -84,10 +132,10 @@ func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTre
 				getNamespacesForPath(path, pathElems[1:], child.Children)
 			}
 		}
+	}
 
-		if !childFound {
-			fmt.Printf("Could not find path element: %s", pathElems[0].Name)
-		}
+	if !childFound {
+		fmt.Printf("Could not find path element: %s", pathElems[0].Name)
 	}
 }
 
