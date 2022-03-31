@@ -53,9 +53,8 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 				var schema Schema
 				json.Unmarshal(update.Val.GetBytesVal(), &schema)
 				schemaTree := getTreeStructure(schema)
-				s.schemaTrees = append(s.schemaTrees, schemaTree)
 
-				log.Info(s.schemaTrees)
+				s.updateSchemaTreeList(schemaTree)
 
 				s.storeSchemaTree(update.Val.GetBytesVal())
 				// path := &gnmi.Path{}
@@ -93,6 +92,20 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 	}
 
 	return resp, nil
+}
+
+func (s *server) updateSchemaTreeList(schemaTree *SchemaTree) {
+	alreadyStored := false
+	for _, entry := range s.schemaTrees {
+		if entry.Name == schemaTree.Name && entry.Namespace == schemaTree.Namespace {
+			alreadyStored = true
+		}
+	}
+	if !alreadyStored {
+		s.schemaTrees = append(s.schemaTrees, schemaTree)
+	} else {
+		log.Info("SchemaTree already stored in list!")
+	}
 }
 
 func (s *server) storeSchemaTree(schemaBytes []byte) {
