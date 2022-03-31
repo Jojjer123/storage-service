@@ -52,19 +52,29 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 				json.Unmarshal(update.Val.GetBytesVal(), &schema)
 				schemaTree := getTreeStructure(schema)
 
-				path := &gnmi.Path{}
-				getNamespacesForPath(path,
-					[]*gnmi.PathElem{
-						{
-							Name: "interfaces",
-						},
-						{
-							Name: "interface",
-						},
-					}, schemaTree.Children)
+				s.storeSchemaTree(schemaTree)
+				// path := &gnmi.Path{}
+				// getNamespacesForPath(path,
+				// 	[]*gnmi.PathElem{
+				// 		{
+				// 			Name: "interfaces",
+				// 		},
+				// 		{
+				// 			Name: "interface",
+				// 		},
+				// 	}, schemaTree.Children)
 
 				updateResult = append(updateResult, &gnmi.UpdateResult{
-					Path: path,
+					Path: &gnmi.Path{
+						Elem: []*gnmi.PathElem{
+							{
+								Name: "Action",
+								Key: map[string]string{
+									"Action": "Successful",
+								},
+							},
+						},
+					},
 				})
 				// fmt.Println(path)
 			}
@@ -78,6 +88,17 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 	}
 
 	return resp, nil
+}
+
+func (s *server) storeSchemaTree(schemaTree *SchemaTree) {
+	_, err := json.Marshal(schemaTree)
+	if err != nil {
+		log.Warnf("Failed to marshal schemaTree! err: %v", err)
+	} else {
+		log.Info("Successfully marshaled schemaTree!")
+	}
+
+	// ioutil.WriteFile("configs_with_ns.json", jsonDump, )
 }
 
 // TODO: Add key reading in path so that specific elements based on keys can be used.
@@ -130,96 +151,35 @@ type SchemaTree struct {
 	Value     string
 }
 
-// TODO: add pointer that traverse the tree based on tags, use that pointer to
-// get correct parents.
 func getTreeStructure(schema Schema) *SchemaTree {
 	var newTree *SchemaTree
 	tree := &SchemaTree{}
 	lastNode := ""
 	for _, entry := range schema.Entries {
-		// fmt.Println("-------------------")
-		// if index == 0 {
-		// newTree = &SchemaTree{Parent: tree}
-		// newTree.Name = entry.Name
-		// newTree.Namespace = entry.Namespace
-		// fmt.Println(tree.Name)
-		// tree = &SchemaTree{Parent: tree}
-		// continue
-		// }
 		if entry.Value == "" { // Directory
 			if entry.Tag == "end" {
 				if entry.Name != "data" {
 					if lastNode != "leaf" {
-						// fmt.Println(tree.Name)
 						tree = tree.Parent
 					}
 					lastNode = ""
-					// continue
 				}
 			} else {
-
 				newTree = &SchemaTree{Parent: tree}
-
 				newTree.Name = entry.Name
 				newTree.Namespace = entry.Namespace
 				newTree.Parent.Children = append(newTree.Parent.Children, newTree)
 
 				tree = newTree
-
-				// fmt.Print(tree.Name)
-				// fmt.Print(", ")
-				// fmt.Println(tree.Parent.Name)
-
-				// tree = &SchemaTree{Parent: tree}
 			}
 		} else { // Leaf
 			newTree = &SchemaTree{Parent: tree}
-
 			newTree.Name = entry.Name
 			newTree.Value = entry.Value
 			newTree.Parent.Children = append(newTree.Parent.Children, newTree)
 
-			// fmt.Print(newTree.Name)
-			// fmt.Print(", ")
-			// fmt.Println(newTree.Parent.Name)
-			// fmt.Println(newTree.Value)
-
 			lastNode = "leaf"
 		}
-		// fmt.Println("-------------------")
-		// fmt.Print("name: ")
-		// fmt.Print(tree.Name)
-		// if tree.Name != "data" {
-		// 	fmt.Print(", parent: ")
-		// 	fmt.Println(tree.Parent.Name)
-
-		// 	// fmt.Println("#######")
-		// 	// for i, child := range tree.Parent.Children {
-		// 	// 	if i < 10 {
-		// 	// 		fmt.Print(child.Name)
-		// 	// 		fmt.Print(", ")
-		// 	// 	}
-		// 	// }
-		// 	// fmt.Println("\n******")
-		// 	// for j, child := range tree.Children {
-		// 	// 	if j < 10 {
-		// 	// 		fmt.Print(child.Name)
-		// 	// 		fmt.Print(": ")
-		// 	// 		fmt.Print(child.Value)
-		// 	// 		fmt.Print(", ")
-		// 	// 	}
-		// 	// }
-		// } else {
-		// 	// fmt.Println("")
-		// 	// for _, child := range tree.Children {
-		// 	// 	fmt.Print(child.Name)
-		// 	// 	fmt.Print(" | ")
-		// 	// }
-		// }
-		// fmt.Println("")
-		// fmt.Println(entry)
-		// fmt.Println(tree.Namespace)
-		// fmt.Println("###################")
 	}
 	return tree
 }
