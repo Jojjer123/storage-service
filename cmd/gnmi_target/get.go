@@ -84,27 +84,18 @@ func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTre
 				}
 			}
 			if pathElems[0].Name == child.Name { // Ex: child is interfaces first time, interface
-				// for key, val := range pathElems[0].Key {
-				// 	if key != "namespace" {
-				// 		for _, obj := range child.Children {
-				// 			if obj.Name == val {
-
-				// 			}
-				// 		}
-				// 	}
-				// }
 				keyChildFound := false
 				var keyChild *SchemaTree
 				for _, keyChild = range child.Children {
 					if val == keyChild.Value {
-						log.Infof("Found key child with name: %s and value: %s", keyChild.Name, keyChild.Value)
+						// log.Infof("Found key child with name: %s and value: %s", keyChild.Name, keyChild.Value)
 						keyChildFound = true
 						break
 					}
 				}
 
 				if keyChildFound {
-					log.Info("Adding namespace if there are one for the current child...")
+					// log.Info("Adding namespace if there are one for the current child...")
 					if child.Namespace != "" {
 						if pathElems[0].Key == nil {
 							pathElems[0].Key = map[string]string{}
@@ -115,12 +106,12 @@ func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTre
 					path.Elem = append(path.Elem, pathElems[0])
 					getNamespacesForPath(path, pathElems[1:], child.Children)
 				} else {
-					log.Infof("%s was not correct child", child.Name)
+					// log.Infof("%s was not correct child", child.Name)
 				}
 			}
 		} else {
 			if pathElems[0].Name == child.Name {
-				log.Infof("Child with name %s does not have any keys", child.Name)
+				// log.Infof("Child with name %s does not have any keys", child.Name)
 				if child.Namespace != "" {
 					if pathElems[0].Key == nil {
 						pathElems[0].Key = map[string]string{}
