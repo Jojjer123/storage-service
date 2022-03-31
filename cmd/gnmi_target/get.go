@@ -41,6 +41,8 @@ func (s *server) Get(ctx context.Context, req *gnmi.GetRequest) (*gnmi.GetRespon
 		log.Warn("Did not recognize requested type!")
 	}
 
+	printSchemaTree(s.schemaTrees[0])
+
 	// COMMENTED FOR TESTING SCHEMA
 
 	// update[0] = &gnmi.Update{
@@ -65,6 +67,13 @@ func (s *server) Get(ctx context.Context, req *gnmi.GetRequest) (*gnmi.GetRespon
 	resp := &gnmi.GetResponse{Notification: notifications}
 
 	return resp, nil
+}
+
+func printSchemaTree(schemaTree *SchemaTree) {
+	fmt.Printf("%s - %s - %v", schemaTree.Parent.Name, schemaTree.Name, schemaTree.Namespace)
+	for _, child := range schemaTree.Children {
+		printSchemaTree(child)
+	}
 }
 
 // TODO: Add key reading in path so that specific elements based on keys can be used.
