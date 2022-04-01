@@ -85,7 +85,7 @@ func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTre
 	}
 
 	for _, child := range schemaTreeChildren {
-		log.Infof("Current child is: %v", child)
+		// log.Infof("Current child is: %v", child)
 		if len(pathElems[0].Key) > 0 {
 			var key, val string
 			for key, val = range pathElems[0].Key {
@@ -93,7 +93,7 @@ func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTre
 					break
 				}
 			}
-			log.Infof("Found key: %s and value: %s", key, val)
+			// log.Infof("Found key: %s and value: %s", key, val)
 			if pathElems[0].Name == child.Name {
 				keyChildFound := false
 				var keyChild *SchemaTree
@@ -108,7 +108,7 @@ func getNamespacesForPath(path *gnmi.Path, pathElems []*gnmi.PathElem, schemaTre
 				if keyChildFound {
 					// log.Info("Adding namespace if there are one for the current child...")
 					if child.Namespace != "" {
-						log.Infof("Child %v has namespace %s", child, child.Namespace)
+						// log.Infof("Child %v has namespace %s", child, child.Namespace)
 						if pathElems[0].Key == nil {
 							pathElems[0].Key = map[string]string{}
 						}
