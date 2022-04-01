@@ -41,7 +41,7 @@ func (s *server) Get(ctx context.Context, req *gnmi.GetRequest) (*gnmi.GetRespon
 		log.Warn("Did not recognize requested type!")
 	}
 
-	printSchemaTree(s.schemaTrees[0])
+	// printSchemaTree(s.schemaTrees[0])
 
 	// COMMENTED FOR TESTING SCHEMA
 
