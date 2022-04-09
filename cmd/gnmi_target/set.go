@@ -233,7 +233,7 @@ func (s *server) updateConfig(update *gnmi.Update) *gnmi.UpdateResult {
 	return nil
 }
 
-func (s *server) modifyCounterData(confObj *types.ConfigObject, counters *[]types.DeviceCounters) error {
+func (s *server) modifyCounterData(confObj *types.ConfigObject, counters *[]types.DeviceCounter) error {
 	for _, oldConfObj := range confObj.Configs {
 		for _, oldCounter := range oldConfObj.Counter {
 			for _, newCounter := range *counters {
@@ -250,12 +250,12 @@ func (s *server) modifyCounterData(confObj *types.ConfigObject, counters *[]type
 	return nil
 }
 
-func (s *server) getCounterData(elem *gnmi.PathElem, index int) []types.DeviceCounters {
+func (s *server) getCounterData(elem *gnmi.PathElem, index int) []types.DeviceCounter {
 	indStr := strconv.Itoa(index)
 
-	var counters []types.DeviceCounters
+	var counters []types.DeviceCounter
 
-	var counter types.DeviceCounters
+	var counter types.DeviceCounter
 	var err error
 
 	i := 0

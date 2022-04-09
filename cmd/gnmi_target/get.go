@@ -10,6 +10,8 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	dataStore "github.com/onosproject/storage-service/pkg/data_store"
 )
 
 // Get overrides the Get func of gnmi.Target to provide user auth.
@@ -28,6 +30,9 @@ func (s *server) Get(ctx context.Context, req *gnmi.GetRequest) (*gnmi.GetRespon
 		},
 	}
 
+	// Adding new "types"
+	// * 4 - add namespaces to provided path
+	// * 5 - get config for a given target
 	switch req.Type {
 	case 4:
 		for _, path := range req.Path {
@@ -37,6 +42,20 @@ func (s *server) Get(ctx context.Context, req *gnmi.GetRequest) (*gnmi.GetRespon
 
 			notifications[0].Update = append(notifications[0].Update, &gnmi.Update{Path: updatedPath})
 		}
+	case 5:
+		configUpdate := &gnmi.Update{
+			Val: &gnmi.TypedValue{
+				Value: &gnmi.TypedValue_BytesVal{BytesVal: dataStore.GetConfig(req)},
+			},
+		}
+		notifications[0].Update = append(notifications[0].Update, configUpdate)
+	case 6:
+		adapter := &gnmi.Update{
+			Val: &gnmi.TypedValue{
+				Value: &gnmi.TypedValue_BytesVal{BytesVal: dataStore.GetAdapter(req)},
+			},
+		}
+		notifications[0].Update = append(notifications[0].Update, adapter)
 	default:
 		log.Warn("Did not recognize requested type!")
 	}
@@ -65,6 +84,7 @@ func (s *server) Get(ctx context.Context, req *gnmi.GetRequest) (*gnmi.GetRespon
 	// END OF TEMPORARY CHANGES
 
 	resp := &gnmi.GetResponse{Notification: notifications}
+	log.Info(resp)
 
 	return resp, nil
 }

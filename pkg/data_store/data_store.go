@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
+	"encoding/json"
+
 	"github.com/openconfig/gnmi/proto/gnmi"
 	"gopkg.in/yaml.v2"
 
@@ -46,19 +48,26 @@ func GetConfig(req *gnmi.GetRequest) []byte {
 	}
 
 	return conf
+}
 
-	// test := []byte(fmt.Sprintf("%v", config))
+func GetAdapter(req *gnmi.GetRequest) []byte {
+	switch req.Path[0].Target {
+	case "NETCONF":
+		adapter := types.Adapter{
+			Protocol: "NETCONF",
+			Address:  "gnmi-netconf-adapter:11161",
+		}
+		fmt.Println(adapter)
+		objSlice, err := json.Marshal(adapter)
+		if err != nil {
+			fmt.Println("Failed to marshal adapter!")
+		}
+		return objSlice
+	default:
+		fmt.Println("Did not recognize protocol when getting adapter!")
+	}
 
-	// var conf Config
-	// yaml.Unmarshal(test, &conf)
-	// fmt.Println(conf.DevicesWithMonitoring[0])
-
-	// fmt.Println(config)
-
-	// return []byte(fmt.Sprintf("%v", config))
-
-	// return nil
-	// return config_file
+	return nil
 }
 
 func GetFullConfig() types.Config {

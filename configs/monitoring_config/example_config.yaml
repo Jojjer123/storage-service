@@ -3,13 +3,10 @@ devices_with_monitoring:
     device_name: switch_one
     protocol: NETCONF
     configs:
-      - device_counters:
+      - device_counters: # Could be renamed as config, to make it more clear what it is
           - name: Ethernet_in-total-frames # name/id
-            interval: 5
-            path: "elem: <name: 'ptp'> elem: <name: 'interface'> elem: <name: 'ethernet'> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
-          - name: second # name/id
-            interval: 2
-            path: "path2"
+            interval: 20000 # ms
+            path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface'> elem: <name: 'sw0p1'> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
       - device_counters:
           - name: Ethernet_in-total-frames # name/id
             interval: 3
