@@ -84,7 +84,7 @@ func (s *server) Get(ctx context.Context, req *gnmi.GetRequest) (*gnmi.GetRespon
 	// END OF TEMPORARY CHANGES
 
 	resp := &gnmi.GetResponse{Notification: notifications}
-	log.Info(resp)
+	// log.Info(resp)
 
 	return resp, nil
 }
