@@ -25,7 +25,9 @@ func GetConfig(req *gnmi.GetRequest) []byte {
 	var config types.Config
 	yaml.Unmarshal(config_file, &config)
 
-	// fmt.Println(config)
+	fmt.Println("---------------------")
+	fmt.Println(config)
+	fmt.Println("---------------------")
 
 	index := -1
 	for i, device := range config.Devices {
