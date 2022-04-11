@@ -19,11 +19,14 @@ func GetConfig(req *gnmi.GetRequest) []byte {
 	config_file, err := ioutil.ReadFile(filename)
 
 	if err != nil {
-		fmt.Println("Failed to read file")
+		fmt.Println("Failed to read file!")
 	}
 
 	var config types.Config
-	yaml.Unmarshal(config_file, &config)
+	err = yaml.Unmarshal(config_file, &config)
+	if err != nil {
+		fmt.Println("Failed to unmarshal config!")
+	}
 
 	fmt.Println("---------------------")
 	fmt.Println(config)
