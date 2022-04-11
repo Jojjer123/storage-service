@@ -25,7 +25,7 @@ func GetConfig(req *gnmi.GetRequest) []byte {
 	var config types.Config
 	err = yaml.Unmarshal(config_file, &config)
 	if err != nil {
-		fmt.Println("Failed to unmarshal config!")
+		fmt.Printf("Failed to unmarshal config! err: %s\n", err)
 	}
 
 	fmt.Println("---------------------")
