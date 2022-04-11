@@ -29,6 +29,7 @@ func GetConfig(req *gnmi.GetRequest) []byte {
 
 	index := -1
 	for i, device := range config.Devices {
+		fmt.Println(device.DeviceIP, req.Path[0].Target)
 		if device.DeviceIP == req.Path[0].Target {
 			index = i
 			break
