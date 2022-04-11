@@ -28,13 +28,13 @@ func GetConfig(req *gnmi.GetRequest) []byte {
 		fmt.Printf("Failed to unmarshal config! err: %s\n", err)
 	}
 
-	fmt.Println("---------------------")
-	fmt.Println(config)
-	fmt.Println("---------------------")
+	// fmt.Println("---------------------")
+	// fmt.Println(config)
+	// fmt.Println("---------------------")
 
 	index := -1
 	for i, device := range config.Devices {
-		fmt.Println(device.DeviceIP, req.Path[0].Target)
+		// fmt.Println(device.DeviceIP, req.Path[0].Target)
 		if device.DeviceIP == req.Path[0].Target {
 			index = i
 			break
