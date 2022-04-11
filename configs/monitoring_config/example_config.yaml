@@ -19,16 +19,16 @@ devices_with_monitoring:
     protocol: NETCONF
     configs:
       - device_counters:
-        - name: total-frames # name/id
+          - name: total-frames # name/id
             interval: 15000 # ms
             path: "elem: <name: 'lldp' key: <key: 'namespace' value: 'urn:ieee:std:802.1AB:yang:ieee802-dot1ab-lldp'>> elem: <name: 'port' key: <key:'name' value: 'sw0p3'>> elem: <name: 'tx-statistics'> elem: <name: 'total-frames'>"
       - device_counters:
-        - name: third # name/id
-          interval: 1.5
-          path: "path3"
-        - name: fourth # name/id
-          interval: 2
-          path: "path4"
-        - name: fifth # name/id
-          interval: 3
-          path: "path5"
+          - name: third # name/id
+            interval: 1.5
+            path: "path3"
+          - name: fourth # name/id
+            interval: 2
+            path: "path4"
+          - name: fifth # name/id
+            interval: 3
+            path: "path5"
