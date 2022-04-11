@@ -63,7 +63,7 @@ func GetAdapter(req *gnmi.GetRequest) []byte {
 			Protocol: "NETCONF",
 			Address:  "gnmi-netconf-adapter:11161",
 		}
-		fmt.Println(adapter)
+		// fmt.Println(adapter)
 		objSlice, err := json.Marshal(adapter)
 		if err != nil {
 			fmt.Println("Failed to marshal adapter!")
