@@ -4,7 +4,7 @@ devices_with_monitoring:
     protocol: NETCONF
     configs:
       - device_counters: # Could be renamed as config, to make it more clear what it is
-          - name: Ethernet_in-total-frames # name/id
+          - name: myOwnIdentifier # name/id
             interval: 10000 # ms
             path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
       - device_counters:
