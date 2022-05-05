@@ -1,13 +1,17 @@
 package types
 
 type DeviceCounter struct {
-	Name     string `yaml:"name"`
-	Interval int    `yaml:"interval"`
-	Path     string `yaml:"path"`
+	Name string `yaml:"name"`
+	Path string `yaml:"path"`
+}
+
+type IntervalCounters struct {
+	Interval int             `yaml:"interval"`
+	Counters []DeviceCounter `yaml:"counters"`
 }
 
 type Conf struct {
-	Counter []DeviceCounter `yaml:"device_counters"`
+	Counters []IntervalCounters `yaml:"config"`
 }
 
 type ConfigObject struct {

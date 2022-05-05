@@ -15,7 +15,6 @@ import (
 
 func GetConfig(req *gnmi.GetRequest) []byte {
 	filename, _ := filepath.Abs("./monitoring_config/example_config.yaml")
-	// fmt.Println(filename)
 	config_file, err := ioutil.ReadFile(filename)
 
 	if err != nil {
