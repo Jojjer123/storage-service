@@ -13,7 +13,7 @@ devices_with_monitoring:
           - interval: 2000
             counters:
               - name: test
-                path: "elem: <name: 'lldp' key: <key: 'namespace' value: 'urn:ieee:std:802.1AB:yang:ieee802-dot1ab-lldp'>> elem: <name: 'port' key: <key:'name' value: 'sw0p2'>> elem: <name: 'rx-statistics'> elem: <name: 'total-ageouts'>"
+                path: "elem: <name: 'lldp' key: <key: 'namespace' value: 'urn:ieee:std:802.1AB:yang:ieee802-dot1ab-lldp'>> elem: <name: 'port' key: <key:'name' value: 'sw0p2'>> elem: <name: 'tx-statistics'> elem: <name: 'total-frames'>"
       - config:
           - interval: 1000
             counters:
