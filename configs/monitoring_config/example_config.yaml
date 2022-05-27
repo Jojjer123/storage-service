@@ -53,6 +53,11 @@ devices_with_monitoring:
             counters:
               - name: sw0p2-mac-merge-smd-error # name/id
                 path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p2'>> elem: <name: 'mac-merge' <key: 'namespace' value: 'urn:ieee:std:802.1Q:yang:ieee802-dot1q-preempt'>> elem: <name: 'statistics'> elem: <name: 'smd-error-count'>"
+      - config:
+          - interval: 120000
+            counters:
+              - name: sw0p1-eth-interface-in-total-frames # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
   - device_ip: 192.168.0.2
     device_name: switch_two
     protocol: NETCONF
