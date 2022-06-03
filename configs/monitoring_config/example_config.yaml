@@ -4,13 +4,68 @@ devices_with_monitoring:
     protocol: NETCONF
     configs:
       - config:
-          - interval: 10000
+          - interval: 60000
             counters:
               - name: sw0p1-eth-interface-in-total-frames # name/id
                 path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> 
                       elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> 
                       elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> 
                       elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
+      - config:
+          - interval: 10000
+            counters:
+              - name: sw0p1-eth-interface-in-total-frames # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
+              - name: sw0p1-eth-interface-in-total-octets # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-octets'>"
+              - name: sw0p1-eth-interface-in-frames # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-frames'>"
+              - name: sw0p1-eth-interface-in-multicast-frames # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-multicast-frames'>"
+              - name: sw0p1-eth-interface-out-frames # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'out-frames'>"
+              - name: sw0p2-mac-merge-assembly-error # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p2'>> elem: <name: 'mac-merge' <key: 'namespace' value: 'urn:ieee:std:802.1Q:yang:ieee802-dot1q-preempt'>> elem: <name: 'statistics'> elem: <name: 'assembly-error-count'>"
+              - name: sw0p2-mac-merge-smd-error # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p2'>> elem: <name: 'mac-merge' <key: 'namespace' value: 'urn:ieee:std:802.1Q:yang:ieee802-dot1q-preempt'>> elem: <name: 'statistics'> elem: <name: 'smd-error-count'>"
+          # - interval: 3000
+          #   counters:
+          #     - name: test
+          #       path: "elem: <name: 'lldp' key: <key: 'namespace' value: 'urn:ieee:std:802.1AB:yang:ieee802-dot1ab-lldp'>> elem: <name: 'port' key: <key:'name' value: 'sw0p2'>> elem: <name: 'tx-statistics'> elem: <name: 'total-frames'>"
+      - config:
+          - interval: 10000
+            counters:
+              - name: sw0p1-eth-interface-in-total-frames # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
+          - interval: 10000
+            counters:
+              - name: sw0p1-eth-interface-in-total-octets # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-octets'>"
+          - interval: 10000
+            counters:
+              - name: sw0p1-eth-interface-in-frames # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-frames'>"
+          - interval: 10000
+            counters:
+              - name: sw0p1-eth-interface-in-multicast-frames # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-multicast-frames'>"
+          - interval: 10000
+            counters:
+              - name: sw0p1-eth-interface-out-frames # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'out-frames'>"
+          - interval: 10000
+            counters:
+              - name: sw0p2-mac-merge-assembly-error # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p2'>> elem: <name: 'mac-merge' <key: 'namespace' value: 'urn:ieee:std:802.1Q:yang:ieee802-dot1q-preempt'>> elem: <name: 'statistics'> elem: <name: 'assembly-error-count'>"
+          - interval: 10000
+            counters:
+              - name: sw0p2-mac-merge-smd-error # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p2'>> elem: <name: 'mac-merge' <key: 'namespace' value: 'urn:ieee:std:802.1Q:yang:ieee802-dot1q-preempt'>> elem: <name: 'statistics'> elem: <name: 'smd-error-count'>"
+      - config:
+          - interval: 120000
+            counters:
+              - name: sw0p1-eth-interface-in-total-frames # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
   - device_ip: 192.168.0.2
     device_name: switch_two
     protocol: NETCONF
@@ -19,10 +74,19 @@ devices_with_monitoring:
           - interval: 10000
             counters:
               - name: sw0p1-eth-interface-in-total-frames # name/id
-                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> 
-                      elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> 
-                      elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> 
-                      elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-frames'>"
+              - name: sw0p1-eth-interface-in-total-octets # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-total-octets'>"
+              - name: sw0p1-eth-interface-in-frames # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-frames'>"
+              - name: sw0p1-eth-interface-in-multicast-frames # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'in-multicast-frames'>"
+              - name: sw0p1-eth-interface-out-frames # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p1'>> elem: <name: 'ethernet' <key: 'namespace' value: 'urn:ieee:std:802.3:yang:ieee802-ethernet-interface'>> elem: <name: 'statistics'> elem: <name: 'frame'> elem: <name: 'out-frames'>"
+              - name: sw0p2-mac-merge-assembly-error # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p2'>> elem: <name: 'mac-merge' <key: 'namespace' value: 'urn:ieee:std:802.1Q:yang:ieee802-dot1q-preempt'>> elem: <name: 'statistics'> elem: <name: 'assembly-error-count'>"
+              - name: sw0p2-mac-merge-smd-error # name/id
+                path: "elem: <name: 'interfaces' key: <key: 'namespace' value: 'urn:ietf:params:xml:ns:yang:ietf-interfaces'>> elem: <name: 'interface' key: <key:'name' value: 'sw0p2'>> elem: <name: 'mac-merge' <key: 'namespace' value: 'urn:ieee:std:802.1Q:yang:ieee802-dot1q-preempt'>> elem: <name: 'statistics'> elem: <name: 'smd-error-count'>"
       - config:
           - interval: 10000
             counters:
