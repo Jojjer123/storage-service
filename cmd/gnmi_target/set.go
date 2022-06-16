@@ -39,43 +39,31 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 	}
 	log.Info("allowed a Set request: %v", msg)
 
-	var updateResult []*gnmi.UpdateResult
+	updateStatus := "Failed"
 
-	// TODO: Refactor
-	// for _, update := range req.Update {
-	// 	if update.Path.Elem[0].Name == "Action" {
-	// 		if update.Path.Elem[0].Key["Action"] == "Change config" {
-	// 			updateResult = append(updateResult, s.updateConfig(update))
-	// 		} else if update.Path.Elem[0].Key["Action"] == "Store namespaces" {
-	// 			// TODO: store namespaces
-	// 			// extractNamespaces(update.Val.GetBytesVal())
+	for _, update := range req.Update {
+		if update.Path.Elem[0].Name == "Action" {
+			if update.Path.Elem[0].Key["Action"] == "StoreGetReq" {
+				log.Info("Storing get request now...")
+				updateStatus = "Success"
+			}
+		}
+	}
 
-	// 			var schema Schema
-	// 			json.Unmarshal(update.Val.GetBytesVal(), &schema)
-	// 			schemaTree := getTreeStructure(schema)
-
-	// 			s.updateSchemaTreeList(schemaTree)
-
-	// 			s.storeSchemaTree(update.Val.GetBytesVal())
-
-	// 			updateResult = append(updateResult, &gnmi.UpdateResult{
-	// 				Path: &gnmi.Path{
-	// 					Elem: []*gnmi.PathElem{
-	// 						{
-	// 							Name: "Action",
-	// 							Key: map[string]string{
-	// 								"Action": "Successful",
-	// 							},
-	// 						},
-	// 					},
-	// 				},
-	// 			})
-	// 			// fmt.Println(path)
-	// 		}
-	// 	} else {
-	// 		fmt.Println("First element in path must be an action!")
-	// 	}
-	// }
+	updateResult := []*gnmi.UpdateResult{
+		{
+			Path: &gnmi.Path{
+				Elem: []*gnmi.PathElem{
+					{
+						Name: "ActionResult",
+						Key: map[string]string{
+							"ActionResult": updateStatus,
+						},
+					},
+				},
+			},
+		},
+	}
 
 	resp := &gnmi.SetResponse{
 		Response: updateResult,
@@ -83,6 +71,43 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 
 	return resp, nil
 }
+
+// OLD CODE IN "Set"
+// TODO: Refactor
+// for _, update := range req.Update {
+// 	if update.Path.Elem[0].Name == "Action" {
+// 		if update.Path.Elem[0].Key["Action"] == "Change config" {
+// 			updateResult = append(updateResult, s.updateConfig(update))
+// 		} else if update.Path.Elem[0].Key["Action"] == "Store namespaces" {
+// 			// TODO: store namespaces
+// 			// extractNamespaces(update.Val.GetBytesVal())
+//
+// 			var schema Schema
+// 			json.Unmarshal(update.Val.GetBytesVal(), &schema)
+// 			schemaTree := getTreeStructure(schema)
+//
+// 			s.updateSchemaTreeList(schemaTree)
+//
+// 			s.storeSchemaTree(update.Val.GetBytesVal())
+//
+// 			updateResult = append(updateResult, &gnmi.UpdateResult{
+// 				Path: &gnmi.Path{
+// 					Elem: []*gnmi.PathElem{
+// 						{
+// 							Name: "Action",
+// 							Key: map[string]string{
+// 								"Action": "Successful",
+// 							},
+// 						},
+// 					},
+// 				},
+// 			})
+// 			// fmt.Println(path)
+// 		}
+// 	} else {
+// 		fmt.Println("First element in path must be an action!")
+// 	}
+// }
 
 // func (s *server) updateSchemaTreeList(schemaTree *SchemaTree) {
 // 	alreadyStored := false
@@ -110,10 +135,10 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 // // func extractNamespaces(bytes []byte) {
 // // 	var schema Schema
 // // 	json.Unmarshal(bytes, &schema)
-
+//
 // // 	// fmt.Println(schema)
 // // 	schemaTree := getTreeStructure(schema)
-
+//
 // // 	// fmt.Println("#######################")
 // // 	fmt.Println(schemaTree.Name)
 // // 	fmt.Println("--------")
@@ -151,7 +176,7 @@ type SchemaTree struct {
 // 				newTree.Name = entry.Name
 // 				newTree.Namespace = entry.Namespace
 // 				newTree.Parent.Children = append(newTree.Parent.Children, newTree)
-
+//
 // 				tree = newTree
 // 			}
 // 		} else { // Leaf
@@ -159,7 +184,7 @@ type SchemaTree struct {
 // 			newTree.Name = entry.Name
 // 			newTree.Value = entry.Value
 // 			newTree.Parent.Children = append(newTree.Parent.Children, newTree)
-
+//
 // 			lastNode = "leaf"
 // 		}
 // 	}
@@ -168,9 +193,9 @@ type SchemaTree struct {
 
 // // func (s *server) updateConfig(update *gnmi.Update) *gnmi.UpdateResult {
 // // 	config := dataStore.GetFullConfig()
-
+//
 // // 	var configObject types.ConfigObject
-
+//
 // // 	infoExists := false
 // // 	for _, elem := range update.Path.Elem[1:] {
 // // 		if elem.Name == "Info" {
@@ -188,16 +213,16 @@ type SchemaTree struct {
 // // 		// TODO: Set gnmi.UpdateResult to be invalid
 // // 		return nil
 // // 	}
-
+//
 // // 	// TODO: Add mutex locks/semaphores on writing to the datastore
-
+//
 // // 	// TODO: update/create config for a given device
-
+//
 // // 	index := 0
-
+//
 // // 	// var config types.Config
 // // 	// var conf types.ConfigObject
-
+//
 // // 	for _, elem := range update.Path.Elem[2:] {
 // // 		switch elem.Name {
 // // 		// case "Info":
@@ -210,16 +235,16 @@ type SchemaTree struct {
 // // 			{
 // // 				// TODO: Get counters and build into Config object, then store that object
 // // 				// as a config file, but also keep an up to date object in memory.
-
+//
 // // 				deviceCounters := s.getCounterData(elem, index)
-
+//
 // // 				// fmt.Println(deviceCounters)
-
+//
 // // 				err := s.modifyCounterData(&configObject, &deviceCounters)
 // // 				if err != nil {
 // // 					fmt.Println("Failed to modify counters!")
 // // 				}
-
+//
 // // 				index++
 // // 			}
 // // 		default:
@@ -228,7 +253,7 @@ type SchemaTree struct {
 // // 			}
 // // 		}
 // // 	}
-
+//
 // // 	return nil
 // // }
 
@@ -239,24 +264,24 @@ type SchemaTree struct {
 // // 				if oldCounter.Name == newCounter.Name {
 // // 					// TODO: Replace old counter fields that new counter has, do not
 // // 					// replace with empty values though.
-
+//
 // // 					break
 // // 				}
 // // 			}
 // // 		}
 // // 	}
-
+//
 // // 	return nil
 // // }
 
 // // func (s *server) getCounterData(elem *gnmi.PathElem, index int) []types.DeviceCounter {
 // // 	indStr := strconv.Itoa(index)
-
+//
 // // 	var counters []types.DeviceCounter
-
+//
 // // 	var counter types.DeviceCounter
 // // 	var err error
-
+//
 // // 	i := 0
 // // 	for name, key := range elem.Key {
 // // 		switch name {
@@ -283,13 +308,13 @@ type SchemaTree struct {
 // // 				fmt.Println("Did not recognize the key!")
 // // 			}
 // // 		}
-
+//
 // // 		if i%3 == 2 {
 // // 			fmt.Println(counter)
 // // 			counters = append(counters, counter)
 // // 		}
 // // 		i++
 // // 	}
-
+//
 // // 	return counters
 // // }
