@@ -24,6 +24,7 @@ COPY configs/target_configs target_configs
 COPY tools/scripts scripts
 COPY pkg/certs certs
 COPY configs/monitoring_config monitoring_config
+COPY configs/main-service-conf main-service-conf
 
 RUN chmod +x ./scripts/run_targets.sh
 CMD ["./scripts/run_targets.sh"]

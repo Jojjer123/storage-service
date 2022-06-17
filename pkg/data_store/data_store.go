@@ -13,6 +13,16 @@ import (
 	types "github.com/onosproject/storage-service/pkg/types"
 )
 
+func GetMainConf() []byte {
+	filename, _ := filepath.Abs("./main-service-conf/response.json")
+	configFile, err := ioutil.ReadFile(filename)
+	if err != nil {
+		fmt.Println("Failed to read file!")
+	}
+
+	return configFile
+}
+
 func GetConfig(req *gnmi.GetRequest) []byte {
 	filename, _ := filepath.Abs("./monitoring_config/example_config.yaml")
 	config_file, err := ioutil.ReadFile(filename)

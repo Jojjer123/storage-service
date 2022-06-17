@@ -37,7 +37,7 @@ func (s *server) Set(ctx context.Context, req *gnmi.SetRequest) (*gnmi.SetRespon
 		log.Infof("denied a Set request: %v", msg)
 		return nil, status.Error(codes.PermissionDenied, msg)
 	}
-	log.Info("allowed a Set request: %v", msg)
+	log.Infof("allowed a Set request: %v", msg)
 
 	updateStatus := "Failed"
 

@@ -14,6 +14,10 @@ import (
 	dataStore "github.com/onosproject/storage-service/pkg/data_store"
 )
 
+const (
+	GetRequest_MainConf gnmi.GetRequest_DataType = 7
+)
+
 // Get overrides the Get func of gnmi.Target to provide user auth.
 func (s *server) Get(ctx context.Context, req *gnmi.GetRequest) (*gnmi.GetResponse, error) {
 	msg, ok := credentials.AuthorizeUser(ctx)
@@ -56,6 +60,13 @@ func (s *server) Get(ctx context.Context, req *gnmi.GetRequest) (*gnmi.GetRespon
 			},
 		}
 		notifications[0].Update = append(notifications[0].Update, adapter)
+	case GetRequest_MainConf:
+		mainConf := &gnmi.Update{
+			Val: &gnmi.TypedValue{
+				Value: &gnmi.TypedValue_JsonVal{JsonVal: dataStore.GetMainConf()},
+			},
+		}
+		notifications[0].Update = append(notifications[0].Update, mainConf)
 	default:
 		log.Warn("Did not recognize requested type!")
 	}
